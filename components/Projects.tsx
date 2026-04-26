@@ -3,12 +3,12 @@ import * as React from 'react';
 import { useState } from 'react';
 import gsap from 'gsap';
 
-export default function Projects() {
+export default function Projects({ onSelectMatcap }) {
     const projects = [
-        { key: 'Tomorrowland', value: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, omnis?', bg: '#8f0c27' },
-        { key: 'Navy Pier', value: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, omnis?', bg: '#ec4899' },   // pink-500
-        { key: 'MSI Chicago', value: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, omnis?', bg: '#3b82f6' }, // blue-500
-        { key: 'This Was Louises Phone', value: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, omnis?', bg: '#22c55e' }, // green-500
+        { key: 'Tomorrowland', value: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, omnis?', bg: '#8f0c27', matcap: 'mat-1' },
+        { key: 'Navy Pier', value: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, omnis?', bg: '#365435', matcap: 'mat-2' },   // pink-500
+        { key: 'MSI Chicago', value: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, omnis?', bg: '#7A1F1F', matcap: 'mat-3' }, // blue-500
+        { key: 'This Was Louises Phone', value: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, omnis?', bg: '#9E1190', matcap: 'mat-4' }, // green-500
     ];
 
     const [hoveredKey, setHoveredKey] = useState<string | null>(null);
@@ -25,12 +25,20 @@ export default function Projects() {
 
     useGSAP(() => {
         const currentItem = projects.find(p => p.key === hoveredKey);
-
         gsap.to("#mainpage", {
             backgroundColor: currentItem ? currentItem.bg : "#1e2438",
             duration: 0.5,
             ease: "power2.out",
+
         });
+
+        gsap.from(".projectDesc", {
+            opacity: 0,
+            y: 20,
+            duration: 0.9,
+            ease: "back.out"
+        })
+
 
     }, [hoveredKey]);
 
@@ -40,12 +48,20 @@ export default function Projects() {
             {projects.map((item) => (
                 <div
                     key={item.key}
-                    onMouseEnter={() => setHoveredKey(item.key)}
-                    onMouseLeave={() => setHoveredKey(null)}
+                    onMouseEnter={() => {
+                        setHoveredKey(item.key);
+                        onSelectMatcap(item.matcap)
+                    }}
+                    onMouseLeave={() => {
+                        setHoveredKey(null);
+                        onSelectMatcap("mat-5");
+                    }
+                    }
+                    className='project'
                 >
                     <h1 className='projectTitle text-8xl my-3 cursor-pointer hover:text-gray-300'>{item.key}</h1>
                     {hoveredKey === item.key && (
-                        <p className='mt-4 absolute bottom-0 right-10 w-50 h-20'>{item.value}</p>
+                        <p className='projectDesc mt-4 absolute bottom-44 right-10 w-70 h-30 border-2 border-black-400 p-3'>{item.value}</p>
                     )}
                 </div>
             ))}
